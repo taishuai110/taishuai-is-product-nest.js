@@ -1,5 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Timestamp } from "typeorm";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Timestamp, ManyToMany
+} from "typeorm";
 import { Roles } from "../../utility/common/user-roles.ennum";
+import { RoleEntity } from "../../roles/entities/role.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -17,8 +26,14 @@ export class UserEntity {
   @Column({ select: false })
   password: string;
 
-  @Column({ type: "enum", enum: Roles, default: [ Roles.USER ] })
-  roles: Roles[];
+  @ManyToMany(type => RoleEntity, (role: RoleEntity) => role.user)
+  // JoinTable的作用是多对多关系表时需要一个中间表确定两表之间的关系，所以这个JoinTable就用于创建关系表
+  @JoinTable({
+    name: 'users_roles',
+    joinColumn: { name: 'users_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'roles_id', referencedColumnName: 'id' }
+  })
+  roles: RoleEntity[];
 
   @CreateDateColumn()
   createdAt: Timestamp;

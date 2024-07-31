@@ -1,16 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserSignUpDto } from "./dto/user-signup.dto";
 import { UserEntity } from "./entities/user.entity";
+import { UserSignInDto } from "./dto/user-signin.dto";
+import { CurrentUser } from "../utility/decorators/current-user.decorator";
+import { AuthenticationGuard } from 'src/utility/guards/authentication.guard';
+import { Roles } from "../utility/common/user-roles.ennum";
+import { AuthorizationGuard } from "../utility/guards/authorization.guard";
+import { AuthorizeRoles } from '../utility/decorators/authorize-roles.decorator'
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {
   }
 
-  // 创建用户
+  // 用户注册接口
   @Post("signup")
   async signup(@Body() userSignUpDto: UserSignUpDto): Promise<{ user: UserEntity }> {
     return {
@@ -18,20 +24,44 @@ export class UsersController {
     };
   }
 
+  // 用户登录接口
+  @Post("signin")
+  async signin(@Body() userSignInDto: UserSignInDto): Promise<{
+    accessToken: string,
+    userInfo: UserEntity
+  }> {
+    // region
+    const userInfo = await this.usersService.signin(userSignInDto);
+    // 创建token
+    const accessToken = await this.usersService.accessToken(userInfo);
+
+    return {
+      accessToken,
+      userInfo
+    };
+    // endregion
+  }
+
+
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     // return this.usersService.create(createUserDto);
     return "holle world";
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  // 查询所有用户数据  第一个用来判断Roles类型，第二个是使用管道判断
+  @AuthorizeRoles(Roles.ADMIN)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  @Get('all')
+  async findAll(): Promise<UserEntity[]> {
+    return await this.usersService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findOne(+id);
+  // 根据id查询用户信息
+  @Get("single/:id")
+  async findOne(@Param("id") id: string): Promise<UserEntity> {
+    // 这里+id表示把string类型的id转为number类型
+    return await this.usersService.findOne(+id);
   }
 
   @Patch(":id")
@@ -42,5 +72,12 @@ export class UsersController {
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.usersService.remove(+id);
+  }
+
+  // 日期配置文件
+  @UseGuards(AuthenticationGuard)
+  @Get('me')
+  getProfile(@CurrentUser() currentUser: UserEntity) {
+    return currentUser;
   }
 }

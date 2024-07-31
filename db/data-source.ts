@@ -19,8 +19,8 @@ export const dataSourceOptions: DataSourceOptions = {
   // 数据库名
   database: process.env.DB_DATABASE,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  migrations: ['dist/migrations/**/*{.ts,.js}'],
-  subscribers: ['dist/subscribers/**/*{.ts,.js}'],
+  // migrations: ['dist/migrations/**/*{.ts,.js}'],
+  // subscribers: ['dist/subscribers/**/*{.ts,.js}'],
   logging: false,
   // 是否同步 这个字段表示如果有设置数据表的文件跟链接数据库类型不一样就会自动对数据库进行跟文件对其
   synchronize: true
