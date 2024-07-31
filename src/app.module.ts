@@ -4,10 +4,11 @@ import { dataSourceOptions } from "../db/data-source";
 import { UsersModule } from './users/users.module';
 import { CurrentUserMiddleware } from './utility/middlewares/current-user.middleware';
 import { RolesModule } from './roles/roles.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   // 这里把数据库对应配置导入到TypeOrm中
-    imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, RolesModule],
+    imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, RolesModule, CategoriesModule],
     controllers: [],
     providers: []
 })

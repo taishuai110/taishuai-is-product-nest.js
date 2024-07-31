@@ -7,7 +7,8 @@ import { UserEntity } from "./entities/user.entity";
 import { UserSignInDto } from "./dto/user-signin.dto";
 import { CurrentUser } from "../utility/decorators/current-user.decorator";
 import { AuthenticationGuard } from 'src/utility/guards/authentication.guard';
-import { Roles } from "../utility/common/user-roles.ennum";
+import { RoleEntity } from '../roles/entities/role.entity';
+import { Roles } from '../utility/common/user-roles.ennum';
 import { AuthorizationGuard } from "../utility/guards/authorization.guard";
 import { AuthorizeRoles } from '../utility/decorators/authorize-roles.decorator'
 
@@ -50,8 +51,8 @@ export class UsersController {
   }
 
   // 查询所有用户数据  第一个用来判断Roles类型，第二个是使用管道判断
-  @AuthorizeRoles(Roles.ADMIN)
-  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  // @AuthorizeRoles(Roles)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard([ Roles.admin ]))
   @Get('all')
   async findAll(): Promise<UserEntity[]> {
     return await this.usersService.findAll();

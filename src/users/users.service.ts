@@ -43,6 +43,7 @@ export class UsersService {
   async signin(userSignInDto: UserSignInDto): Promise<UserEntity> {
     const userExists = await this.usersRepository.createQueryBuilder("users")
       .addSelect("users.password")
+      .leftJoinAndSelect("users.roles", 'roles')
       .where("users.email=:email", { email: userSignInDto.email })
       .getOne();
     // 判断是否存在该用户
