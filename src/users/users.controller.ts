@@ -52,7 +52,7 @@ export class UsersController {
 
   // 查询所有用户数据  第一个用来判断Roles类型，第二个是使用管道判断
   // @AuthorizeRoles(Roles)
-  @UseGuards(AuthenticationGuard, AuthorizationGuard([ Roles.admin ]))
+  @UseGuards(AuthenticationGuard, AuthorizationGuard([ Roles.ADMIN ]))
   @Get('all')
   async findAll(): Promise<UserEntity[]> {
     return await this.usersService.findAll();

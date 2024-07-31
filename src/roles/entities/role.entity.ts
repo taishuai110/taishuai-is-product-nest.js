@@ -9,6 +9,6 @@ export class RoleEntity {
   @Column({ default: "admin" })
   admin: string;
 
-  @ManyToMany(type => UserEntity, (user: UserEntity) => user.roles)
+  @ManyToMany(() => UserEntity, (user: UserEntity) => user.roles)
   user: UserEntity[];
 }
