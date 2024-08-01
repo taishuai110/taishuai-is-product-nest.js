@@ -8,7 +8,7 @@ import { CurrentUser } from "src/utility/decorators/current-user.decorator";
 import { AuthenticationGuard } from "../utility/guards/authentication.guard";
 import { AuthorizationGuard } from "../utility/guards/authorization.guard";
 import { Roles } from "../utility/common/user-roles.ennum";
-import { DeleteResult } from "typeorm";
+
 
 @Controller("categories")
 export class CategoriesController {
@@ -45,11 +45,10 @@ export class CategoriesController {
   // 根据id删除种类数据
   @Delete(":id")
   async remove(@Param("id") id: string) {
-    const category: DeleteResult = await this.categoriesService.remove(+id);
+    const categor = await this.categoriesService.remove(+id);
     // affected表示删除的行数 0时表示未删除数据
-    if(!category.affected) throw new BadRequestException("未能删除种类数据");
     return {
-      message: '已删除种类数据',
+      message: categor ? '已删除种类数据' : "未删除种类数据，请联系管理员" ,
       code: 200,
       data: []
     };
