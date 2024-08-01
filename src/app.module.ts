@@ -6,10 +6,11 @@ import { CurrentUserMiddleware } from './utility/middlewares/current-user.middle
 import { RolesModule } from './roles/roles.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   // 这里把数据库对应配置导入到TypeOrm中
-    imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, RolesModule, CategoriesModule, ProductsModule],
+    imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, RolesModule, CategoriesModule, ProductsModule, ReviewsModule],
     controllers: [],
     providers: []
 })
