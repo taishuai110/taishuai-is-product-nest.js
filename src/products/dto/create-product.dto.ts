@@ -26,5 +26,5 @@ export class CreateProductDto {
 
   @IsNotEmpty({ message: "类别id不能为空" })
   @IsNumber({}, { message: "类别id要为number" })
-  category: number;
+  categoryId: number;
 }
