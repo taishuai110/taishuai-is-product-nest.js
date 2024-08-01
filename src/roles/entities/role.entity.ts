@@ -6,7 +6,7 @@ export class RoleEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: "admin" })
+  @Column({ default: "admin", comment: "角色权限：目前只有admin有权限" })
   admin: string;
 
   @ManyToMany(() => UserEntity, (user: UserEntity) => user.roles)

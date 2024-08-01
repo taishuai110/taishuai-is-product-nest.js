@@ -10,21 +10,22 @@ import {
 import { Roles } from "../../utility/common/user-roles.ennum";
 import { RoleEntity } from "../../roles/entities/role.entity";
 import { CategoryEntity } from "../../categories/entities/category.entity";
+import { ProductEntity } from "../../products/entities/product.entity";
 
 @Entity("users")
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ comment: '用户名' })
   name: string;
 
   // 设置唯一性
-  @Column({ unique: true })
+  @Column({ unique: true, comment: "邮箱地址" })
   email: string;
 
   // select: false表示查询数据表时不会查询到password字段
-  @Column({ select: false })
+  @Column({ select: false, comment: "密码" })
   password: string;
 
   @CreateDateColumn()
@@ -44,4 +45,7 @@ export class UserEntity {
 
   @OneToMany(() => CategoryEntity, (cat: CategoryEntity) => cat.addedBy)
   categories: CategoryEntity[];
+
+  @OneToMany(() => ProductEntity, (prod: ProductEntity) => prod.addedBy)
+  products: ProductEntity[]
 }
