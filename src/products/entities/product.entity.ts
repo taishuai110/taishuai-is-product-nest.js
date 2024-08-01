@@ -1,8 +1,9 @@
 // 创建products数据表
 
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "../../users/entities/user.entity";
 import { CategoryEntity } from "../../categories/entities/category.entity";
+import { ReviewEntity } from "src/reviews/entities/review.entity";
 
 @Entity({ name: 'products', comment: "商品表" })
 export class ProductEntity {
@@ -37,4 +38,7 @@ export class ProductEntity {
 
   @ManyToOne(() => CategoryEntity, (cat: CategoryEntity) => cat.products)
   category: CategoryEntity;
+
+  @OneToMany(() => ReviewEntity, (review) => review.product)
+  reviews: ReviewEntity[];
 }

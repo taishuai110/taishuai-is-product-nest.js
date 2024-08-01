@@ -7,10 +7,10 @@ import {
   UpdateDateColumn,
   Timestamp, ManyToMany, OneToMany
 } from "typeorm";
-import { Roles } from "../../utility/common/user-roles.ennum";
 import { RoleEntity } from "../../roles/entities/role.entity";
 import { CategoryEntity } from "../../categories/entities/category.entity";
 import { ProductEntity } from "../../products/entities/product.entity";
+import { ReviewEntity } from "src/reviews/entities/review.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -48,4 +48,7 @@ export class UserEntity {
 
   @OneToMany(() => ProductEntity, (prod: ProductEntity) => prod.addedBy)
   products: ProductEntity[]
+
+  @OneToMany(() => ReviewEntity, (review) => review.user)
+  reviews: ReviewEntity[]
 }
