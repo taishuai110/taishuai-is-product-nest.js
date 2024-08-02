@@ -7,10 +7,11 @@ import { RolesModule } from './roles/roles.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   // 这里把数据库对应配置导入到TypeOrm中
-    imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, RolesModule, CategoriesModule, ProductsModule, ReviewsModule],
+    imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, RolesModule, CategoriesModule, ProductsModule, ReviewsModule, OrdersModule],
     controllers: [],
     providers: []
 })
