@@ -54,7 +54,7 @@ export class ProductsService {
       }
     });
 
-    if (!product) throw new NotFoundException(`未找到id为:${id}的商品`);
+    if (!product) throw new NotFoundException(`未找到id为${id}的商品`);
     return product;
   }
 

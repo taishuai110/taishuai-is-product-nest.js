@@ -1,10 +1,10 @@
 import { ProductEntity } from "src/products/entities/product.entity";
 import { UserEntity } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, Timestamp, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
 @Entity({ name: "reviews" })
 export class ReviewEntity {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number
 
     @Column({ comment: "评论等级" })
