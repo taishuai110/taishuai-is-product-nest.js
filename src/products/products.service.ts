@@ -1,18 +1,20 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductEntity } from "./entities/product.entity";
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
-import { UserEntity } from 'src/users/entities/user.entity';
-import { CategoriesService } from '../categories/categories.service';
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, Repository } from "typeorm";
+import { UserEntity } from "src/users/entities/user.entity";
+import { CategoriesService } from "../categories/categories.service";
+import { OrderStatus } from "../orders/enums/order-status.enum";
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
     private readonly categoryService: CategoriesService
-  ) { }
+  ) {
+  }
 
   // 创建商品数据
   async create(createProductDto: CreateProductDto, currentUser: UserEntity): Promise<ProductEntity> {
@@ -83,10 +85,32 @@ export class ProductsService {
   // 根据id删除商品数据
   async remove(id: number) {
     const product = await this.findOne(id);
-    if(!product) throw new NotFoundException("找不到你要删除的商品id");
+    if (!product) throw new NotFoundException("找不到你要删除的商品id");
     const productDelet: DeleteResult = await this.productRepository.delete(id);
     // affected删除的数量
-    if(!productDelet.affected) throw new BadRequestException("删除数据失败"); 
+    if (!productDelet.affected) throw new BadRequestException("删除数据失败");
     return true;
+  }
+
+  /*
+  * 更新商品库存
+  *
+  * @param id  商品id
+  * @param stock  存货
+  * @param status 订单状态
+  *
+  * */
+  async updateStock(id: number, stock: number, status: string) {
+    let product: ProductEntity = await this.findOne(id);
+    // 假如商品支付成功了 则减少商品的库存数
+    if (status == OrderStatus.DELIVERED) {
+      product.stock -= stock;
+    } else {
+      // 否则商品库存则被添加
+      product.stock += stock;
+    }
+    // 把数据保存在数据表中
+    product = await this.productRepository.save(product);
+    return product;
   }
 }

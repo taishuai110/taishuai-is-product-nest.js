@@ -5,7 +5,7 @@ export enum OrderStatus {
     PROCESSING = 'processing',
     // 正在发货
     SHIPPED = 'shipped',
-    // 支付中
+    // 支付成功
     DELIVERED = 'delivered',
     // 订单被取消时
     CENCELLED = 'cancelled'

@@ -1,5 +1,5 @@
 // 用户注册的校验规则
-import { IsNotEmpty, IsString, IsEmail, MinLength } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 import { UserSignInDto } from "./user-signin.dto";
 
 export class UserSignUpDto extends UserSignInDto {
