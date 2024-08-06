@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UserEntity } from "src/users/entities/user.entity";
 import { OrderEntity } from "./entities/order.entity";
@@ -20,7 +20,7 @@ export class OrdersService {
     private readonly orderRepository: Repository<OrderEntity>,
     @InjectRepository(OrdersProductsEntity)
     private readonly opRepository: Repository<OrdersProductsEntity>,
-    private readonly productService: ProductsService
+    @Inject(forwardRef(() => ProductsService)) private readonly productService: ProductsService,
   ) {
   }
 
@@ -79,7 +79,7 @@ export class OrdersService {
   // 查询所有订单
   async findAll(): Promise<OrderEntity[]> {
     return await this.orderRepository.find({
-      relations: [ "shippingAddress", "user", "products" ]
+      relations: ["shippingAddress", "user", "products"]
     });
   }
 
@@ -91,6 +91,15 @@ export class OrdersService {
     });
     if (!orderData) throw new NotFoundException(`找不到id为${id}的订单`);
     return orderData;
+  }
+
+  async findOneByProductId(id: number) {
+    return await this.opRepository.findOne({
+      where: { produce: { id: id } },
+      relations: {
+        produce: true
+      }
+    });
   }
 
   // 这里是修改订单的状态，只能传发货或交货的状态
@@ -129,7 +138,7 @@ export class OrdersService {
     order.status = updateOrderStatusDto.status;
     order.updatedBy = currentUser;
     order = await this.orderRepository.save(order);
-    if(updateOrderStatusDto.status === OrderStatus.DELIVERED) {
+    if (updateOrderStatusDto.status === OrderStatus.DELIVERED) {
       await this.stockUpdate(order, OrderStatus.DELIVERED);
     }
 
@@ -138,17 +147,17 @@ export class OrdersService {
 
   //取消订单的serivce  订单id
   async cancelled(id: number, currentUser: UserEntity) {
-      let order = await this.findOne(id);
-      if(!order) throw new NotFoundException('找不到订单');
-      // 如果订单已被取消，则返回查询到的订单信息
-      if(order.status === OrderStatus.CENCELLED) return order;
+    let order = await this.findOne(id);
+    if (!order) throw new NotFoundException("找不到订单");
+    // 如果订单已被取消，则返回查询到的订单信息
+    if (order.status === OrderStatus.CENCELLED) return order;
 
-      // 订单还没被取消，则把订单状态改为取消状态
-      order.status = OrderStatus.CENCELLED;
-      // 获取修改订单的用户
-      order.updatedBy = currentUser;
-      order = await this.orderRepository.save(order);
-      // 更新数据库中的商品库存
+    // 订单还没被取消，则把订单状态改为取消状态
+    order.status = OrderStatus.CENCELLED;
+    // 获取修改订单的用户
+    order.updatedBy = currentUser;
+    order = await this.orderRepository.save(order);
+    // 更新数据库中的商品库存
     await this.stockUpdate(order, OrderStatus.CENCELLED);
     return order;
   }
@@ -160,7 +169,7 @@ export class OrdersService {
   // 订单发生变化时 更新商品的数量以及库存
   async stockUpdate(order: OrderEntity, status: string) {
     for (const op of order.products) {
-      await this.productService.updateStock(op.id, op.product_quantity, status)
+      await this.productService.updateStock(op.id, op.product_quantity, status);
     }
   }
 }

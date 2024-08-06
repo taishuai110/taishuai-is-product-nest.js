@@ -43,6 +43,6 @@ export class ProductEntity {
   @OneToMany(() => ReviewEntity, (review) => review.product)
   reviews: ReviewEntity[];
 
-  @OneToMany(() => OrdersProductsEntity, (op: OrdersProductsEntity) => op.prodcut)
+  @OneToMany(() => OrdersProductsEntity, (op: OrdersProductsEntity) => op.produce)
   products: OrdersProductsEntity[];
 }
